@@ -2,11 +2,11 @@ require 'user_agent_parser'
 
 class PayloadAnalyzer
 
-  def parse(raw_payload)
+  def self.parse(raw_payload, client = nil)
     user_agent = UserAgentParser.parse(raw_payload.delete(:userAgent))
     os = user_agent.os.to_s
     browser = user_agent.to_s
-    resolution = resolution_parse(raw_payload.delete(:resolutionWidth), raw_payload.delete(:resolutionHeight))
+    resolution = raw_payload.delete(:resolutionWidth) + "x" + raw_payload.delete(:resolutionHeight)
     verb = raw_payload.delete(:requestType)
     referred = raw_payload.delete(:referredBy)
     url = raw_payload.delete(:url)
@@ -27,11 +27,18 @@ class PayloadAnalyzer
     Url.find_or_create_by(route: url).payloads << payload
     EventName.find_or_create_by(name: eventname).payloads << payload
     UserAgent.find_or_create_by(os: os, browser: browser, composite_key: (os + browser)).payloads << payload
-    Client.find_or_create_by(root_url: root_url).payloads << payload
-  end
+    if client.nil?
+      Client.find_or_create_by(root_url: root_url).payloads << payload
+    else
+      client << payload
+    end
+    error = nil
 
-  def resolution_parse(width, height)
-    width + "x" + height
+    if payload.errors.any?
+      error = payload.errors.full_messages.join(", ")
+    end
+
+    return error
   end
 
 end

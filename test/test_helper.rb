@@ -24,8 +24,8 @@ module TestHelpers
   end
 
   def create_payloads(num)
-    analyzer = PayloadAnalyzer.new
-    num.times { |index| analyzer.parse(random_payloads[index]) }
+
+    num.times { |index| PayloadAnalyzer.parse(random_payloads[index]) }
   end
 
   def create_clients(num)
