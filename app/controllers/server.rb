@@ -17,7 +17,7 @@ module RushHour
       if arguments.count != 2
         status 400
         body error
-      elsif error != nil
+      elsif error
         status 403
         body error
       else
@@ -27,12 +27,16 @@ module RushHour
     end
 
     post '/sources/:identifier/data' do |identifier|
-      payload = JSON.parse(params[:payload], :symbolize_names => true)
-      error = PayloadAnalyzer.parse(payload, Client.where(identifier: identifier))
-      if params[:payload] == nil
+      binding.pry
+      payload = JSON.parse(params[:payload], :symbolize_names => true) if params[:payload]
+
+      if !payload
         status 400
-        body error
-      elsif error != nil
+        body "Payload not sent"
+      elsif !Client.find_by(identifier: identifier)
+        status 403
+        body "Application not registered"
+      elsif error = PayloadAnalyzer.parse(payload, Client.where(identifier: identifier))
         status 403
         body error
       else

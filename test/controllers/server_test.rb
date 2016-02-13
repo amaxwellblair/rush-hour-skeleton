@@ -41,4 +41,11 @@ class ServerTest < Minitest::Test
     assert_equal 1, Payload.count
     assert_equal 200, last_response.status
   end
+
+  def test_returns_error_if_no_payload_exists
+    post '/sources/jumpstartlab/data'
+
+    assert_equal 0, Payload.count
+    assert_equal 400, last_response.status
+  end
 end
