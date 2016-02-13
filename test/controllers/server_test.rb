@@ -34,6 +34,11 @@ class ServerTest < Minitest::Test
     assert_equal "Identifier has already been taken", last_response.body
   end
 
+  def test_creates_payload_only_with_unique_identifier
+    create_clients(1)
+    post '/sources/jumpstartlab/data', { payload: random_payloads.first.to_json }
 
-
+    assert_equal 1, Payload.count
+    assert_equal 200, last_response.status
+  end
 end

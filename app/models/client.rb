@@ -3,4 +3,5 @@ class Client < ActiveRecord::Base
   has_many :urls, through: :payloads
   validates :root_url, presence: true
   validates :identifier, presence: true, uniqueness: true
+  # validates :composite_key, presence: true, uniqueness: true
 end
