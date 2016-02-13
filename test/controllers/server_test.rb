@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'pry'
 
 class ServerTest < Minitest::Test
   include Rack::Test::Methods
@@ -34,9 +35,21 @@ class ServerTest < Minitest::Test
     assert_equal "Identifier has already been taken", last_response.body
   end
 
-  def test_creates_payload_only_with_unique_identifier
+  def test_creates_payload_with_a_client_that_does_exists
     create_clients(1)
-    post '/sources/jumpstartlab/data', { payload: random_payloads.first.to_json }
+    create_payloads(1)
+
+    post '/sources/thing0/data', "payload=#{random_payloads.first.to_json}"
+
+    assert_equal 1, Payload.count
+    assert_equal 403, last_response.status
+    assert_equal "Composite key has already been taken", last_response.body
+  end
+
+  def test_creates_payload_only_with_unique_identifier
+    create_unique_client
+
+    post '/sources/jumpstartlab/data', "payload=#{random_payloads.first.to_json}"
 
     assert_equal 1, Payload.count
     assert_equal 200, last_response.status

@@ -27,6 +27,10 @@ module TestHelpers
     num.times { |index| PayloadAnalyzer.parse(random_payloads[index]) }
   end
 
+  def create_unique_client
+    ClientAnalyzer.parse({identifier: "jumpstartlab", rootUrl: "www.another_thing.com"})
+  end
+
   def create_clients(num)
     num.times { |index| ClientAnalyzer.parse({identifier: "thing#{index}", rootUrl: "www.another_thing.com#{index}"}) }
   end

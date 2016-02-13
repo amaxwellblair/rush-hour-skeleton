@@ -3,7 +3,7 @@ require 'user_agent_parser'
 
 class PayloadAnalyzer
 
-  def self.parse(raw_payload, client = nil)
+  def self.parse(raw_payload, client_id = nil)
     user_agent = UserAgentParser.parse(raw_payload[:userAgent])
     os = user_agent.os.to_s
     browser = user_agent.to_s
@@ -30,10 +30,8 @@ class PayloadAnalyzer
     EventName.find_or_create_by(name: eventname).payloads << payload
     UserAgent.find_or_create_by(os: os, browser: browser, composite_key: (os + browser)).payloads << payload
 
-    if client.nil?
-      Client.find_or_create_by(root_url: root_url).payloads << payload
-    else
-      client << payload
+    if client_id
+      Client.find_or_create_by(identifier: client_id).payloads << payload
     end
     error = nil
 
