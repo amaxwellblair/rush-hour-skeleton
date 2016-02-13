@@ -14,7 +14,7 @@ class Payload < ActiveRecord::Base
   validates :ip_id, presence: true
   validates :user_agent_id, presence: true
   validates :referred_id, presence: true
-  # validates :client_id, uniqueness: true
+  validates :client_id, presence: true
   validates :composite_key, uniqueness: true
 
   def self.average_response_time

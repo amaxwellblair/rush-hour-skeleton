@@ -24,7 +24,8 @@ module TestHelpers
   end
 
   def create_payloads(num)
-    num.times { |index| PayloadAnalyzer.parse(random_payloads[index]) }
+    create_unique_client
+    num.times { |index| PayloadAnalyzer.parse(random_payloads[index], "jumpstartlab") }
   end
 
   def create_unique_client

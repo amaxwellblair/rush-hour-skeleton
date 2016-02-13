@@ -35,10 +35,7 @@ module RushHour
         if !payload
           status 400
           body "Payload not sent"
-        elsif Client.all.none? { |client| client.identifier == identifier}
-          status 403
-          body error
-        elsif error != nil
+        elsif error
           status 403
           body error
         else

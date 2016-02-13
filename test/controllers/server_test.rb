@@ -25,7 +25,7 @@ class ServerTest < Minitest::Test
     assert_equal "Root url can't be blank, Identifier can't be blank", last_response.body
   end
 
-  def test_cant_create_duplicate_client
+  def test_cant_create_duplicate_payload
     create_clients(1)
 
     post '/sources', 'identifier=thing0&rootUrl=www.another_thing.com0'
@@ -33,6 +33,14 @@ class ServerTest < Minitest::Test
     assert_equal 1, Client.count
     assert_equal 403, last_response.status
     assert_equal "Identifier has already been taken", last_response.body
+  end
+
+  def test_cant_create_unregisted_client
+    post '/sources/thing0/data', "payload=#{random_payloads.first.to_json}"
+
+    assert_equal 0, Payload.count
+    assert_equal 403, last_response.status
+    assert_equal "Client can't be blank", last_response.body
   end
 
   def test_creates_payload_with_a_client_that_does_exists
