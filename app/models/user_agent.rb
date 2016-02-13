@@ -5,11 +5,11 @@ class UserAgent < ActiveRecord::Base
   validates :composite_key, presence: true, uniqueness: true
 
   def self.browser_breakdown
-    UserAgent.pluck(:browser)
+    self.pluck(:browser)
   end
 
   def self.os_breakdown
-    UserAgent.pluck(:os)
+    self.pluck(:os)
   end
 
 end

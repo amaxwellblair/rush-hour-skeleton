@@ -28,7 +28,6 @@ module RushHour
     post '/sources/:identifier/data' do |identifier|
       payload = JSON.parse(params[:payload], :symbolize_names => true)
       error = PayloadAnalyzer.parse(payload, Client.where(identifier: identifier))
-
       if params[:payload] == nil
         status 400
         body error
@@ -39,7 +38,5 @@ module RushHour
         status 200
       end
     end
-
-
   end
 end
