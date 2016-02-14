@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>urls</title>
+  </head>
+  <body>
+    <h3></h3>
+      <% @statistics.each do |key, value| %>
+      <% value = value.join(", ") if value.class == Array %>
+      <p><%= "#{key.to_s}: #{value.to_s} "%></p>
+      <% end %>
+      <p>List of urls:
+        <% @list_of_paths.each_with_index do |path, index| %>
+        <a href="<%="sources/#{identifier}/urls#{path}"%>"><%=@list_of_urls[index]%></a>
+        <% end %>
+      </p>
+  </body>
+</html>

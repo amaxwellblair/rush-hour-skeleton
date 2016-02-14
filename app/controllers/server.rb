@@ -34,6 +34,13 @@ module RushHour
       end
     end
 
+    get '/sources/:identifier/urls/:path' do |identifier, path|
+      client = Client.find_by(identifier: identifier)
+      route = client[:root_url] + '/' + path
+      url = client.urls.where(route: route)
+      url.max_response_time
+    end
+
     not_found do
       erb :error
     end
@@ -76,9 +83,5 @@ module RushHour
         body "Payload not sent"
       end
     end
-  end
-
-  get '/sources/:identifier/urls/:path'
-
   end
 end
