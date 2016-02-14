@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213002547) do
+ActiveRecord::Schema.define(version: 20160213230701) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,18 +30,18 @@ ActiveRecord::Schema.define(version: 20160213002547) do
   end
 
   create_table "payloads", force: :cascade do |t|
-    t.string  "url_id"
     t.string  "requested_at"
-    t.string  "referred_id"
     t.string  "parameters"
-    t.string  "event_name_id"
-    t.string  "ip_id"
     t.integer "request_type_id"
     t.integer "screen_resolution_id"
     t.integer "user_agent_id"
     t.integer "responded_in"
     t.integer "client_id"
     t.string  "composite_key"
+    t.integer "url_id"
+    t.integer "referred_id"
+    t.integer "event_name_id"
+    t.integer "ip_id"
   end
 
   create_table "referreds", force: :cascade do |t|
@@ -57,8 +57,6 @@ ActiveRecord::Schema.define(version: 20160213002547) do
   end
 
   create_table "urls", force: :cascade do |t|
-    t.string "path"
-    t.string "verb"
     t.string "route"
   end
 

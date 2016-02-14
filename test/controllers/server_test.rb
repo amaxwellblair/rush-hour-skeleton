@@ -69,4 +69,16 @@ class ServerTest < Minitest::Test
     assert_equal 0, Payload.count
     assert_equal 400, last_response.status
   end
+
+  def test_client_has_not_registered_when_trying_to_view_the_statistics
+    get '/sources/jumpstartlab'
+
+    assert_equal 400, last_response.status
+  end
+
+  def test_client_has_no_payloads_when_trying_to_view_stats
+    create_unique_client
+    get '/sources/jumpstartlab'
+    assert_equal 400, last_response.status
+  end
 end
