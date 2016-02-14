@@ -12,7 +12,7 @@
       <% end %>
       <p>List of urls:
         <% @list_of_paths.each_with_index do |path, index| %>
-        <a href="<%="sources/#{identifier}/urls#{path}"%>"><%=@list_of_urls[index]%></a>
+        <a href="<%=url("/sources/#{identifier}/urls#{path}")%>"><%=@list_of_urls[index]%></a>
         <% end %>
       </p>
     </div>

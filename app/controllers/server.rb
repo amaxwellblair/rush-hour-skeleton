@@ -4,8 +4,30 @@ require 'json'
 module RushHour
   class Server < Sinatra::Base
 
-    get '/sources/:identifier' do |identifier|
+    get '/sources/:identifier/urls/:path' do |identifier, path|
+      client = Client.find_by(identifier: identifier)
+      route = client[:root_url] + '/' + path
+      url = client.urls.find_by(route: route)
+      if url
+        @statistics = {
+          "Max response time" =>              url.max_response_time,
+          "Min response time" =>              url.min_response_time,
+          "List of response times" =>         url.ranked_response_times,
+          "Average response time" =>          url.average_response_time,
+          "HTTP verb(s) requested" =>         url.associated_verbs,
+          "Three most popular referrers" =>   url.most_popular_referrer(3),
+          "Three most popular user agents" => url.most_popular_user_agents(3)
+        }
 
+        erb :urls
+      else
+        status 400
+        @error = "The url requested does not exist"
+        erb :error
+      end
+    end
+
+    get '/sources/:identifier' do |identifier|
       if !(client = Client.find_by(identifier: identifier))
         status 400
         @error = "Client has not registered"
@@ -32,13 +54,6 @@ module RushHour
         end
         erb :index, locals: {identifier: identifier}
       end
-    end
-
-    get '/sources/:identifier/urls/:path' do |identifier, path|
-      client = Client.find_by(identifier: identifier)
-      route = client[:root_url] + '/' + path
-      url = client.urls.where(route: route)
-      url.max_response_time
     end
 
     not_found do

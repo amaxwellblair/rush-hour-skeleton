@@ -30,7 +30,7 @@ module TestHelpers
   end
 
   def create_unique_client
-    ClientAnalyzer.parse({identifier: "jumpstartlab", rootUrl: "www.another_thing.com"})
+    ClientAnalyzer.parse({identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com"})
   end
 
   def create_clients(num)

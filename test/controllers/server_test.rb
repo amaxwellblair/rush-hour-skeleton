@@ -81,4 +81,24 @@ class ServerTest < Minitest::Test
     get '/sources/jumpstartlab'
     assert_equal 400, last_response.status
   end
+
+  def test_specific_url_when_at_client_stats
+    create_unique_client
+    create_payloads(1)
+
+    get 'sources/jumpstartlab/urls/blog'
+
+    assert_equal 200, last_response.status
+  end
+
+
+  def test_incorrect_url_when_at_client_stats
+    create_unique_client
+    create_payloads(1)
+
+    get 'sources/jumpstartlab/urls/blo'
+
+    assert_equal 400, last_response.status
+  end
+
 end

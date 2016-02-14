@@ -10,8 +10,8 @@ class UserCanViewStatsTest < Minitest::Test
 
     visit "/sources/jumpstartlab/urls/blog"
 
-    within "#h3" do
-      assert page.has_content? "blog"
+    within "#url_stats" do
+      assert page.has_content? "67"
     end
   end
 end
