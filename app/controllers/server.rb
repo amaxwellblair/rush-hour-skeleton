@@ -16,17 +16,21 @@ module RushHour
         erb :error
       else
         @statistics = {
-          average_response_time:  client.payloads.average_response_time,
-          max_response_time:      client.payloads.max_response_time,
-          min_response_time:      client.payloads.min_response_time,
-          most_frequent_request:  client.request_types.most_frequent_request,
-          list_of_all_verbs:      client.request_types.verbs_used,
-          list_of_all_urls:       client.urls.pluck(:route),
-          web_browser_breakdown:  client.user_agents.browser_breakdown,
-          os_breakdown:           client.user_agents.os_breakdown,
-          screen_resolution:      client.screen_resolutions.screen_resolution_breakdown
+          "Average response time" => client.payloads.average_response_time,
+          "Max response time" =>     client.payloads.max_response_time,
+          "Min response time" =>     client.payloads.min_response_time,
+          "Most frequent request" => client.request_types.most_frequent_request,
+          "List of all verbs" =>     client.request_types.verbs_used,
+          "Web browser breakdown" => client.user_agents.browser_breakdown,
+          "OS breakdown" =>          client.user_agents.os_breakdown,
+          "Screen resolution" =>     client.screen_resolutions.screen_resolution_breakdown
         }
-        erb :index
+
+        @list_of_urls = client.urls.pluck(:route)
+        @list_of_paths = @list_of_urls.map do |url|
+          url[/\b\/{1}.+/]
+        end
+        erb :index, locals: {identifier: identifier}
       end
     end
 
@@ -72,5 +76,9 @@ module RushHour
         body "Payload not sent"
       end
     end
+  end
+
+  get '/sources/:identifier/urls/:path'
+
   end
 end
