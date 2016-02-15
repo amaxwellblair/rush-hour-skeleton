@@ -44,14 +44,13 @@ class ServerTest < Minitest::Test
   end
 
   def test_creates_payload_with_a_payload_that_already_does_exists
-    create_unique_client
     create_payloads(1)
 
-    post '/sources/thing0/data', "payload=#{random_payloads.first.to_json}"
+    post '/sources/jumpstartlab/data', "payload=#{random_payloads.first.to_json}"
 
     assert_equal 1, Payload.count
     assert_equal 403, last_response.status
-    assert_equal "Client can't be blank", last_response.body
+    assert_equal "Composite key has already been taken", last_response.body
   end
 
   def test_creates_payload_only_with_unique_identifier
