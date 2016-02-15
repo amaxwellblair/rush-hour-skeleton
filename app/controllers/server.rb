@@ -65,16 +65,8 @@ module RushHour
     get '/sources/:identifier/events/:event_name' do |identifier, event_name|
       client = Client.find_by(identifier: identifier)
       event_name = client.event_names.find_by(name: event_name)
-      # 
-      # times = (1..24).each_with_object({}) do |hour, times|
-      #    event_name.payloads.pluck(:requested_at).map do |time|
-      #    end
-      # end
-      #
-      # times["#{(Time.now - 60*60*hour).strftime("%l")}:00"] = Time.now - (60*60*(24 - hour))
-
       if event_name
-        @statistics = {time: "this is the time"}
+        @statistics = event_name.payloads_per_hour
         erb :event
       else
         @error = "<a href='/sources/#{identifier}'>Back to home page</a>"

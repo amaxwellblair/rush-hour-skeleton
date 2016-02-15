@@ -51,7 +51,7 @@ class ServerTest < Minitest::Test
 
     assert_equal 1, Payload.count
     assert_equal 403, last_response.status
-    assert_equal "Composite key has already been taken", last_response.body
+    assert_equal "Client can't be blank", last_response.body
   end
 
   def test_creates_payload_only_with_unique_identifier

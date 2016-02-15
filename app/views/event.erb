@@ -5,6 +5,7 @@
     <title>Event</title>
   </head>
   <body>
+    <h3>When event occurred:</h3>
     <div id=url_stats >
       <% @statistics.each do |key, value| %>
       <% value = value.join(", ") if value.class == Array %>
