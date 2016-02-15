@@ -7,4 +7,11 @@ class EventNameTest < Minitest::Test
     create_payloads(4)
     assert_equal ["socialLogin", "ChickenLogin"], EventName.sort_payloads_by_requests
   end
+
+  def test_payloads_per_hour
+    create_unique_client
+    create_payloads(4)
+    assert_equal "thing", EventName.all.first.payloads_per_hour
+  end
+
 end

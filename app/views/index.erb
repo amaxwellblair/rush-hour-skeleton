@@ -10,9 +10,14 @@
       <% value = value.join(", ") if value.class == Array %>
       <p><%= "#{key.to_s}: #{value.to_s} "%></p>
       <% end %>
-      <p>List of urls:
+      <p>List of URLs:
         <% @list_of_paths.each_with_index do |path, index| %>
-        <a href="<%=url("/sources/#{identifier}/urls#{path}")%>"><%=@list_of_urls[index]%></a>
+        <p><a href="<%=url("/sources/#{identifier}/urls#{path}")%>"><%=@list_of_urls[index]%></a></p>
+        <% end %>
+      </p>
+      <p>List of Events:
+        <% @list_of_events.each do |event_name| %>
+        <p><a href="<%=url("/sources/#{identifier}/events/#{event_name}")%>"><%=event_name%></a></p>
         <% end %>
       </p>
     </div>

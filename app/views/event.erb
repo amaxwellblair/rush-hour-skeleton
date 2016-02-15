@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Event</title>
+  </head>
+  <body>
+    <div id=url_stats >
+      <% @statistics.each do |key, value| %>
+      <% value = value.join(", ") if value.class == Array %>
+      <p><%= "#{key.to_s}: #{value.to_s} "%></p>
+      <% end %>
+    </div>
+  </body>
+</html>

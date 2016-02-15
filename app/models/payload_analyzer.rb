@@ -13,7 +13,7 @@ class PayloadAnalyzer
     url = raw_payload[:url]
     ip = raw_payload[:ip]
     eventname = raw_payload[:eventName]
-    requested_at = raw_payload[:requestAt]
+    requested_at = raw_payload[:requestedAt]
     responded_in = raw_payload[:respondedIn]
     parameters = raw_payload[:parameters]
     # binding.pry
