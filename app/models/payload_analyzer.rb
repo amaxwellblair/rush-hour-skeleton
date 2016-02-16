@@ -18,9 +18,7 @@ class PayloadAnalyzer
 
     error = nil
 
-    if payload.errors.any?
-      error = payload.errors.full_messages.join(", ")
-    end
+    error = payload.errors.full_messages.join(", ") if payload.errors.any?
 
     return error
   end
