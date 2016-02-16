@@ -1,38 +1,21 @@
-require 'pry'
 require 'user_agent_parser'
 
 class PayloadAnalyzer
 
   def self.parse(raw_payload, client_id = nil)
-    user_agent = UserAgentParser.parse(raw_payload[:userAgent])
-    os = user_agent.os.to_s
-    browser = user_agent.to_s
-    resolution = raw_payload[:resolutionWidth] + "x" + raw_payload[:resolutionHeight]
-    verb = raw_payload[:requestType]
-    referred = raw_payload[:referredBy]
-    url = raw_payload[:url]
-    ip = raw_payload[:ip]
-    eventname = raw_payload[:eventName]
-    requested_at = raw_payload[:requestedAt]
-    responded_in = raw_payload[:respondedIn]
-    parameters = raw_payload[:parameters]
-    # binding.pry
-    composite_key = os + browser + resolution + verb + referred + url + ip + eventname + requested_at.to_s + responded_in.to_s + parameters.join
-    root_url = url[/.+\/{1}/]
 
-    payload = Payload.create(requested_at: requested_at, responded_in: responded_in, parameters: parameters, composite_key: composite_key)
+    payload = Payload.create(requested_at: requested_at(raw_payload), responded_in: responded_in(raw_payload), parameters: parameters(raw_payload), composite_key: composite_key(raw_payload))
 
-    RequestType.find_or_create_by(verb: verb).payloads << payload
-    ScreenResolution.find_or_create_by(size: resolution).payloads << payload
-    Referred.find_or_create_by(name: referred).payloads << payload
-    Ip.find_or_create_by(address: ip).payloads << payload
-    Url.find_or_create_by(route: url).payloads << payload
-    EventName.find_or_create_by(name: eventname).payloads << payload
-    UserAgent.find_or_create_by(os: os, browser: browser, composite_key: (os + browser)).payloads << payload
+    RequestType.find_or_create_by(verb: verb(raw_payload)).payloads << payload
+    ScreenResolution.find_or_create_by(size: resolution(raw_payload)).payloads << payload
+    Referred.find_or_create_by(name: referred(raw_payload)).payloads << payload
+    Ip.find_or_create_by(address: ip(raw_payload)).payloads << payload
+    Url.find_or_create_by(route: url(raw_payload)).payloads << payload
+    EventName.find_or_create_by(name: eventname(raw_payload)).payloads << payload
+    UserAgent.find_or_create_by(os: os(raw_payload), browser: browser(raw_payload), composite_key: (os(raw_payload) + browser(raw_payload))).payloads << payload
 
-    if client_id
-      Client.find_or_create_by(identifier: client_id).payloads << payload
-    end
+    Client.find_or_create_by(identifier: client_id).payloads << payload if client_id
+
     error = nil
 
     if payload.errors.any?
@@ -42,4 +25,55 @@ class PayloadAnalyzer
     return error
   end
 
+  def self.user_agent(raw_payload)
+    UserAgentParser.parse(raw_payload[:userAgent])
+  end
+
+  def self.os(raw_payload)
+    user_agent(raw_payload).os.to_s
+  end
+
+  def self.browser(raw_payload)
+    user_agent(raw_payload).to_s
+  end
+
+  def self.resolution(raw_payload)
+    raw_payload[:resolutionWidth] + "x" + raw_payload[:resolutionHeight]
+  end
+
+  def self.verb(raw_payload)
+    raw_payload[:requestType]
+  end
+
+  def self.referred(raw_payload)
+    raw_payload[:referredBy]
+  end
+
+  def self.url(raw_payload)
+    raw_payload[:url]
+  end
+
+  def self.ip(raw_payload)
+    raw_payload[:ip]
+  end
+
+  def self.eventname(raw_payload)
+    raw_payload[:eventName]
+  end
+
+  def self.requested_at(raw_payload)
+    raw_payload[:requestedAt]
+  end
+
+  def self.responded_in(raw_payload)
+    raw_payload[:respondedIn]
+  end
+
+  def self.parameters(raw_payload)
+    raw_payload[:parameters]
+  end
+
+  def self.composite_key(raw_payload)
+    os(raw_payload) + browser(raw_payload) + resolution(raw_payload) + verb(raw_payload)+ referred(raw_payload) + url(raw_payload) + ip(raw_payload) + eventname(raw_payload) + requested_at(raw_payload).to_s + responded_in(raw_payload).to_s + parameters(raw_payload).join
+  end
 end

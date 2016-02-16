@@ -43,7 +43,7 @@ class ServerTest < Minitest::Test
     assert_equal "Client can't be blank", last_response.body
   end
 
-  def test_creates_payload_with_a_payload_that_already_does_exists
+  def test_tries_to_create_duplicate_payload
     create_payloads(1)
 
     post '/sources/jumpstartlab/data', "payload=#{random_payloads.first.to_json}"

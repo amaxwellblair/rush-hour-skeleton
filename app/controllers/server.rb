@@ -1,4 +1,3 @@
-require 'pry'
 require 'json'
 require 'time'
 
@@ -9,53 +8,15 @@ module RushHour
       client = Client.find_by(identifier: identifier)
       route = client[:root_url] + '/' + path
       url = client.urls.find_by(route: route)
-      if url
-        @statistics = {
-          "Max response time" =>              url.max_response_time,
-          "Min response time" =>              url.min_response_time,
-          "List of response times" =>         url.ranked_response_times,
-          "Average response time" =>          url.average_response_time,
-          "HTTP verb(s) requested" =>         url.associated_verbs,
-          "Three most popular referrers" =>   url.most_popular_referrer(3),
-          "Three most popular user agents" => url.most_popular_user_agents(3)
-        }
 
-        erb :urls
-      else
-        status 400
-        @error = "The url requested does not exist"
-        erb :error
-      end
+      url_to_view(url)
+
     end
 
     get '/sources/:identifier' do |identifier|
-      if !(client = Client.find_by(identifier: identifier))
-        status 400
-        @error = "Client has not registered"
-        erb :error
-      elsif client.payloads.all.empty?
-        status 400
-        @error = "No payload data submitted for this client"
-        erb :error
-      else
-        @statistics = {
-          "Average response time" => client.payloads.average_response_time,
-          "Max response time" =>     client.payloads.max_response_time,
-          "Min response time" =>     client.payloads.min_response_time,
-          "Most frequent request" => client.request_types.most_frequent_request,
-          "List of all verbs" =>     client.request_types.verbs_used,
-          "Web browser breakdown" => client.user_agents.browser_breakdown,
-          "OS breakdown" =>          client.user_agents.os_breakdown,
-          "Screen resolution" =>     client.screen_resolutions.screen_resolution_breakdown
-        }
+      client = Client.find_by(identifier: identifier)
+      client_to_view(client)
 
-        @list_of_urls = client.urls.pluck(:route)
-        @list_of_paths = @list_of_urls.map do |url|
-          url[/\b\/{1}.+/]
-        end
-        @list_of_events = client.event_names.pluck(:name)
-        erb :index, locals: {identifier: identifier}
-      end
     end
 
     not_found do
@@ -65,13 +26,7 @@ module RushHour
     get '/sources/:identifier/events/:event_name' do |identifier, event_name|
       client = Client.find_by(identifier: identifier)
       event_name = client.event_names.find_by(name: event_name)
-      if event_name
-        @statistics = event_name.payloads_per_hour
-        erb :event
-      else
-        @error = "<a href='/sources/#{identifier}'>Back to home page</a>"
-        erb :error
-      end
+      event_to_view(client, event_name)
     end
 
     post '/sources' do
@@ -80,16 +35,9 @@ module RushHour
       end
 
       error = ClientAnalyzer.parse(arguments)
-      if arguments.count != 2
-        status 400
-        body error
-      elsif error
-        status 403
-        body error
-      else
-        status 200
-        body JSON.generate({identifier: arguments[:identifier]})
-      end
+
+      index_to_view(arguments, error)
+
     end
 
     post '/sources/:identifier/data' do |identifier|
@@ -98,15 +46,8 @@ module RushHour
 
         error = PayloadAnalyzer.parse(payload, identifier)
 
-        if !payload
-          status 400
-          body "Payload not sent"
-        elsif error
-          status 403
-          body error
-        else
-          status 200
-        end
+        data_to_view(payload, error)
+
       else
         status 400
         body "Payload not sent"
